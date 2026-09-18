@@ -12,7 +12,7 @@ These principles should be considered together from the beginning of a design. P
 
 The following style guides should be followed when writing code for the Computer Aided Validation Laboratory organisation:
 
-* [Python Style Guide](guides/python_style_guide.md)
+* [Python Style Guide](guides/python_style_guide .md)
 
 If you are writing performant compiled code for scientific or engineering simulation software start here:
 

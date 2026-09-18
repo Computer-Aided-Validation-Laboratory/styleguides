@@ -1,9 +1,11 @@
 # Python Style Guide
 
-This guide defines the Python style used for our scientific and engineering software.
-It is deliberately opinionated. Python has many ways to solve the same problem; we use a
-smaller, explicit subset that keeps code readable, fast, predictable and approachable for our 
-users.
+This guide defines the Python style used for our scientific and
+engineering software.
+It is deliberately prescriptive.
+Python has many ways to solve the same problem;
+we use a smaller, explicit subset that keeps code readable, fast,
+predictable and approachable for our users.
 
 When writing Python code our priorities are:
 
@@ -11,9 +13,35 @@ When writing Python code our priorities are:
 2. **Make it fast.**
 3. **Make the user interface simple and intuitive.**
 
-Prefer explicit, readable code over clever Python. Design numerical code with data layout,
-memory access and performance in mind from the beginning. Public interfaces should be easy
-to remember, difficult to misuse and unsurprising.
+Prefer explicit, readable code over clever Python.
+Design numerical code with data layout, memory access and performance in mind from
+the beginning.
+Public interfaces should be easy to remember,
+difficult to misuse and unsurprising.
+
+## Table of Contents
+
+- [Quick Rules for New Contributors](#quick-rules-for-new-contributors)
+- [1. Formatting](#1-formatting)
+- [2. Naming](#2-naming)
+- [3. Type Hints](#3-type-hints)
+- [4. Functions and Control Flow](#4-functions-and-control-flow)
+- [5. Errors, Warnings and Validation](#5-errors-warnings-and-validation)
+- [6. Data Structures](#6-data-structures)
+- [7. Classes, Abstraction and Inheritance](#7-classes-abstraction-and-inheritance)
+- [8. Restricted and Banned Python Features](#8-restricted-and-banned-python-features)
+- [9. Argument Mutation and Side Effects](#9-argument-mutation-and-side-effects)
+- [10. NumPy, SciPy and Numerical Code](#10-numpy-scipy-and-numerical-code)
+- [11. Performance and Memory](#11-performance-and-memory)
+- [12. Copies, Views and Array Ownership](#12-copies-views-and-array-ownership)
+- [13. Public API Design](#13-public-api-design)
+- [14. I/O, Plotting and User Interaction](#14-io-plotting-and-user-interaction)
+- [15. File and Path Handling](#15-file-and-path-handling)
+- [16. Imports and Dependencies](#16-imports-and-dependencies)
+- [17. Cython](#17-cython)
+- [18. Testing and Correctness](#18-testing-and-correctness)
+- [19. Comments and Docstrings](#19-comments-and-docstrings)
+- [20. Tooling](#20-tooling)
 
 ---
 
@@ -22,13 +50,16 @@ to remember, difficult to misuse and unsurprising.
 If you are new to the project, start here:
 
 1. Make the code correct first.
-2. Design numerical code with data layout and performance in mind from the beginning.
+2. Design numerical code with data layout and performance in mind from
+   the beginning.
 3. Make the public API simple and unsurprising.
 4. Use Ruff and an 88 character line length.
 5. Type hint all function arguments and return values.
-6. Use descriptive names: functions are verbs, classes are nouns.
+6. Use descriptive names:
+   functions are verbs, classes are nouns.
 7. Prefer functions, dataclasses and composition over inheritance.
-8. Do not use clever Python features when an explicit alternative exists.
+8. Do not use clever Python features when an explicit alternative exists (e.g.
+   @property vs an explicit function).
 9. Do not mutate arguments unless the function name makes that behaviour obvious.
 10. Prefer NumPy/SciPy operations over Python loops across numerical values.
 11. Document NumPy array shapes and axis meanings.
@@ -37,7 +68,8 @@ If you are new to the project, start here:
 14. Fail quickly rather than continuing with questionable data.
 15. Every bug fix gets a regression test.
 16. Prefer analytic tests and gold end-to-end regression tests.
-17. Keep public imports shallow: normally no deeper than `package.submodule.thing`.
+17. Keep public imports shallow:
+    normally no deeper than `package.submodule.thing`.
 18. Avoid unnecessary dependencies beyond NumPy, SciPy, Matplotlib and Cython.
 
 ---
@@ -46,15 +78,15 @@ If you are new to the project, start here:
 
 - Use **Ruff** for formatting and everyday linting.
 - Use an **88 character line length**.
-- Follow [PEP 8](https://peps.python.org/pep-0008/) unless this guide explicitly says
-  otherwise.
+- Follow [PEP 8](https://peps.python.org/pep-0008/) unless this guide explicitly says otherwise.
 - Use blank lines to separate logical groups of statements.
 - Prefer a few clear intermediate statements over one dense expression.
-- Keep `if` conditions simple. Calculate complex predicates in named intermediate variables
-  before the `if`.
-- Keep comprehensions simple: normally one line, one `for` loop and at most one function
-  call. Use explicit statements or loops for filters, nested loops, nested comprehensions or
-  multiple operations.
+- Keep `if` conditions simple.
+  Calculate complex predicates in named intermediate variables before the `if`.
+- Keep comprehensions simple:
+  normally one line, one `for` loop and at most one function call.
+  Use explicit statements or loops for filters, nested loops,
+  nested comprehensions or multiple operations.
 
 Example:
 
@@ -70,12 +102,13 @@ if is_inside and is_valid:
 
 ## 2. Naming
 
-Use descriptive names. Code should normally explain itself without requiring comments.
+Use descriptive names.
+Code should normally explain itself without requiring comments.
 
 ### Functions
 
-Function names use `snake_case` and should start with a **verb** that describes what the
-function does.
+Function names use `snake_case` and should start with a **verb** that
+describes what the function does.
 
 ```python
 calculate_error()
@@ -84,8 +117,8 @@ load_image()
 extract_surface()
 ```
 
-Avoid vague names such as `process()`, `handle()` or `do_thing()` unless the meaning is
-obvious from context.
+Avoid vague names such as `process()`, `handle()` or `do_thing()` unless the meaning is obvious from
+context.
 
 ### Classes
 
@@ -141,8 +174,9 @@ DEFAULT_TOLERANCE = 1.0e-8
 MAX_ITERATIONS = 100
 ```
 
-Avoid magic numbers. Give important numerical values descriptive names and add a comment
-when the name alone does not explain the value.
+Avoid magic numbers.
+Give important numerical values descriptive names and add a comment when
+the name alone does not explain the value.
 
 ### Acronyms and abbreviations
 
@@ -170,20 +204,21 @@ RGBImage
 PSFModel
 ```
 
-Single-letter names are only acceptable for obvious indices or iterators. NumPy-style
-iterator names such as `ii`, `jj` and `kk` are fine.
+Single-letter names are only acceptable for obvious indices or iterators.
+NumPy-style iterator names such as `ii`, `jj` and `kk` are fine.
 
 ---
 
 ## 3. Type Hints
 
-Type hint everything that forms part of an interface and anything where the type helps the
-reader understand the code.
+Type hint everything that forms part of an interface and anything where
+the type helps the reader understand the code.
 
 - Type hint all function arguments.
 - Type hint all function return values.
 - Type hint public class attributes.
-- Type hint local variables when the concrete type is not obvious or is useful context.
+- Type hint local variables when the concrete type is not obvious or
+  is useful context.
 - Avoid `Any` unless interacting with genuinely dynamic external code.
 - Use modern union syntax such as `Path | None`.
 - Prefer a real `Enum` over `Literal` when values represent a meaningful finite set.
@@ -200,8 +235,8 @@ def render(
     ...
 ```
 
-This is useful even when the type checker could infer the type because the annotation tells
-the reader immediately what `create_image()` returns.
+This is useful even when the type checker could infer the type because
+the annotation tells the reader immediately what `create_image()` returns.
 
 ```python
 image_path: Path = create_image(...)
@@ -215,16 +250,18 @@ image_path: Path = create_image(...)
 - Fail fast with clear error messages.
 - Check everything cheap that can be checked before starting expensive work.
 - Do not use exceptions for normal control flow.
-- In most scientific applications an unrecoverable error should raise an exception and stop
-  the calculation rather than trying to continue in an uncertain state.
-- A large function is not automatically bad. A function that forces the reader to jump
-  through several layers of unnecessary helpers can be worse.
+- In most scientific applications an unrecoverable error should raise an exception and
+  stop the calculation rather than trying to continue in an uncertain state.
+- A large function is not automatically bad.
+  A function that forces the reader to jump through several layers of
+  unnecessary helpers can be worse.
 - Functions with a single call site should be avoided and the logic inlined.
 - Long argument lists are acceptable when they make important inputs explicit.
 - Use keyword only arguments for optional or configuration like parameters.
 - Avoid positional booleans.
-- Use an `Enum`, `Thing | None`, or another meaningful type when it communicates intent better
-than a boolean. 
+- Use an `Enum`, `Thing | None`,
+  or another meaningful type when it communicates intent better
+than a boolean.
 
 An example function definition is shown below:
 
@@ -250,7 +287,8 @@ def render(scene,
            psf_type=None):
 ```
 
-Note that the booleans here are duplicating information that can just be expressed in the `interp_type` and the `psf_type` directly.
+Note that the booleans here are duplicating information that can just be expressed in
+the `interp_type` and the `psf_type` directly.
 
 ---
 
@@ -259,8 +297,8 @@ Note that the booleans here are duplicating information that can just be express
 Prefer explicit failure over silent recovery.
 
 - Raise clear exceptions when inputs are invalid, ambiguous or unsafe.
-- Do not silently guess when a wrong assumption could change the physical or numerical
-  meaning of a result.
+- Do not silently guess when a wrong assumption could change the physical or
+  numerical meaning of a result.
 - Treat warnings as failures in normal project development and testing.
 - Keep `try` blocks as small as possible.
 - Catch only exceptions that are expected and can be handled meaningfully.
@@ -295,12 +333,13 @@ The reason for this is that:
 - type checkers can reason about the structure;
 - `slots=True` prevents dynamic attributes and reduces memory overhead.
 
-Dataclasses should primarily contain **data**. Validation and simple setup in
-`__post_init__()` are fine, but substantial algorithms should normally live in functions or
+Dataclasses should primarily contain **data**.
+Validation and simple setup in `__post_init__()` are fine,
+but substantial algorithms should normally live in functions or
 behavioural classes.
 
-For mutable defaults, use `None` or `field(default_factory=...)` as appropriate. Never use a
-mutable object directly as a default value.
+For mutable defaults, use `None` or `field(default_factory=...)` as appropriate.
+Never use a mutable object directly as a default value.
 
 ### Structured return values
 
@@ -314,14 +353,15 @@ class CalibrationResult:
     residuals: np.ndarray
 ```
 
-This is clearer than returning a tuple whose element meanings must be remembered.
+This is clearer than returning a tuple whose element meanings must be
+remembered.
 
 ---
 
 ## 7. Classes, Abstraction and Inheritance
 
-Use a mixture of plain functions and classes. Do not use object oriented programming simply
-because Python supports it.
+Use a mixture of plain functions and classes.
+Do not use object oriented programming simply because Python supports it.
 
 ### Prefer
 
@@ -341,9 +381,9 @@ Inheritance is only for a **pure abstract interface** using `ABC`.
 - Keep abstraction to one layer.
 - Prefer composition and dependency injection.
 
-Introduce an interface only when it solves a real problem. A useful rule of thumb is to add
-one when there are around three implementations or when explicit conditional dispatch has
-become genuinely awkward.
+Introduce an interface only when it solves a real problem.
+A useful rule of thumb is to add one when there are around three implementations or
+when explicit conditional dispatch has become genuinely awkward.
 
 ### Normal classes
 
@@ -370,7 +410,8 @@ def from_file(cls, path: Path) -> Self:
 
 ## 8. Restricted and Banned Python Features
 
-Python contains many powerful features that are unnecessary for most engineering software.
+Python contains many powerful features that are unnecessary for
+most engineering software.
 Avoiding them makes the code easier to read, debug and maintain.
 
 ### Use normally when appropriate
@@ -391,8 +432,8 @@ Avoiding them makes the code easier to read, debug and maintain.
 - lambdas;
 - generators where a simpler structure is clearer.
 
-Use lambdas only for trivial single expression callbacks or sort keys. Give meaningful behaviour
-a named function.
+Use lambdas only for trivial single expression callbacks or sort keys.
+Give meaningful behaviour a named function.
 
 ### Banned
 
@@ -413,14 +454,16 @@ Do not use:
 - `eval()`;
 - `exec()`.
 
-Do not invent clever object semantics through custom dunder methods when a standard data
-structure or explicit method would be clearer.
+Do not invent clever object semantics through custom dunder methods when
+a standard data structure or explicit method would be clearer.
 
 ---
 
 ## 9. Argument Mutation and Side Effects
 
-Functions must not silently mutate arguments supplied by the caller. If a function mutates an input, the mutation must be explicit in the API by using one of the following conventions:
+Functions must not silently mutate arguments supplied by the caller.
+If a function mutates an input, the mutation must be explicit in the API by using one of
+the following conventions:
 
 By explicitly returning the mutated input:
 
@@ -445,9 +488,13 @@ transform_array(out=array)
 ```
 
 
-Returning a mutated object does not create a copy. The returned value is another reference to the same object. For performance sensitive numerical code, prefer an `out=` argument when the caller may benefit from controlling allocation or reusing existing storage.
+Returning a mutated object does not create a copy.
+The returned value is another reference to the same object.
+For performance sensitive numerical code, prefer an `out=` argument when
+the caller may benefit from controlling allocation or reusing existing storage.
 
-Mutation of `self` by instance methods is exempt from this rule because modifying object state is an expected part of method semantics:
+Mutation of `self` by instance methods is exempt from this rule because
+modifying object state is an expected part of method semantics:
 
 ```python
 class Camera:
@@ -455,7 +502,10 @@ class Camera:
         self.position = position
 ```
 
-Do not use mutable global state. Module level constants are fine; mutable module level configuration and caches should be avoided unless there is a strong justification.
+Do not use mutable global state.
+Module level constants are fine;
+mutable module level configuration and caches should be avoided unless there is
+a strong justification.
 
 ---
 
@@ -463,8 +513,10 @@ Do not use mutable global state. Module level constants are fine; mutable module
 
 NumPy and SciPy are the default tools for numerical work.
 
-- Prefer NumPy and SciPy operations over Python loops across individual numerical values.
-- Push numerical work into compiled operations where this makes the code clear and fast.
+- Prefer NumPy and SciPy operations over Python loops across individual numerical
+  values.
+- Push numerical work into compiled operations where this makes the code clear and
+  fast.
 - Ordinary Python loops over high-level objects are fine.
 - Do not contort simple control flow merely to remove a loop.
 
@@ -490,7 +542,9 @@ for camera in cameras:
 
 ### Array meaning must be explicit
 
-NumPy arrays are opaque. When manipulating important arrays, document the following in comments and docstrings:
+NumPy arrays are opaque.
+When manipulating important arrays, document the following in comments and
+docstrings:
 
 - shape;
 - axis meaning;
@@ -517,18 +571,22 @@ array shapes or axis meanings would otherwise be unclear during manipulation.
 
 ### Units
 
-Numerical code is normally **unitless**, as in many finite element codes. The caller is
-responsible for supplying a consistent system of units. Do not silently convert or assume mixed units unless a particular API explicitly exists for that purpose.
+Numerical code is normally **unitless**, as in many finite element codes.
+The caller is responsible for supplying a consistent system of units.
+Do not silently convert or assume mixed units unless a particular API explicitly exists for
+that purpose.
 
 ---
 
 ## 11. Performance and Memory
 
-Design with performance intent from the beginning, then measure and improve.
+Design with performance intent from the beginning,
+then measure and improve.
 
-Do not deliberately write an inefficient implementation on the assumption that profiling can
-fix it later. Poor data layout can make later optimisation difficult or require a complete
-rewrite.
+Do not deliberately write an inefficient implementation on the assumption that
+profiling can fix it later.
+Poor data layout can make later optimisation difficult or
+require a complete rewrite.
 
 When designing numerical code, consider:
 
@@ -550,7 +608,8 @@ Once the basic structure is sound:
 - improve the expensive parts;
 - do not destroy readability for insignificant gains.
 
-Be aware that apparently simple NumPy operations may allocate temporary arrays or copies.
+Be aware that apparently simple NumPy operations may allocate temporary arrays or
+copies.
 Avoid unnecessary allocations in performance sensitive code.
 
 ---
@@ -563,8 +622,8 @@ Be explicit about whether an operation returns a copy or a view.
 - Prefer a copy when shared memory would make behaviour surprising or unsafe.
 - Do not rely on subtle NumPy view behaviour being obvious to the caller.
 - Document unusual view or ownership behaviour.
-- When a function intentionally modifies a shared array, make that behaviour obvious from the
-  API and documentation.
+- When a function intentionally modifies a shared array,
+  make that behaviour obvious from the API and documentation.
 
 Correctness and predictability are more important than avoiding every copy.
 
@@ -597,23 +656,25 @@ Avoid forcing users to remember deeply nested paths such as:
 pyvale.render.geometry.transforms.mesh_transform(...)
 ```
 
-Internal modules can be deeper. Use `__init__.py` re-exports to lift public functionality to
-the appropriate level.
+Internal modules can be deeper.
+Use `__init__.py` re-exports to lift public functionality to the appropriate level.
 
 ### Make important data obvious
 
-The major data that determines what a function does should be visible in the function
-signature.
+The major data that determines what a function does should be visible in
+the function signature.
 
-Do not hide major inputs behind unnecessary layers of configuration simply to shorten the
-argument list.
+Do not hide major inputs behind unnecessary layers of configuration simply to
+shorten the argument list.
 
 ### Defaults
 
 Provide defaults when there is a safe and unsurprising choice.
+Require the caller to provide a value when choosing a default could silently
+change the physical or numerical meaning of the calculation.
 
-Require the caller to provide a value when choosing a default could silently change the
-physical or numerical meaning of the calculation.
+Default tolerances on floating point calculations should be named `CONSTANTS` and the reason for
+the selected value should be documented.
 
 ### Predictability
 
@@ -651,8 +712,9 @@ rather than one function that calculates, saves, prints and plots.
 
 Most library functions should be silent and should not print to the console.
 
-For long-running simulations or calculations, progress and status output can be useful, but
-there must always be an explicit way to disable it.
+For long-running simulations or calculations,
+progress and status output can be useful,
+but there must always be an explicit way to disable it.
 
 For example:
 
@@ -672,8 +734,8 @@ Prefer:
 path = Path("results") / "image.png"
 ```
 
-Do not manually build paths with string concatenation and avoid `os.path` for normal path
-handling.
+Do not manually build paths with string concatenation and avoid `os.path` for
+normal path handling.
 
 Keep file I/O outside numerical kernels wherever practical.
 
@@ -707,14 +769,18 @@ Treat the following as our normal scientific Python platform:
 - Matplotlib;
 - Cython.
 
-Prefer these tools for scientific and numerical work. After this core set, be conservative
-about adding third-party dependencies. Add another dependency only when it provides substantial functionality that would be costly, risky or distracting to implement ourselves. Do not add dependencies for trivial convenience functions.
+Prefer these tools for scientific and numerical work.
+After this core set, be conservative about adding third-party dependencies.
+Add another dependency only when it provides substantial functionality that
+would be costly, risky or distracting to implement ourselves.
+Do not add dependencies for trivial convenience functions.
 
 ---
 
 ## 17. Cython
 
-Use Cython when Python and NumPy are no longer sufficient for performance sensitive code.
+Use Cython when Python and NumPy are no longer sufficient for
+performance sensitive code.
 
 Prefer modern **pure Python mode** Cython syntax where practical.
 
@@ -728,18 +794,22 @@ In Cython:
 - be conscious of bounds checking and other runtime overhead;
 - keep the Python API simple even when the implementation is specialised.
 
-Do not mechanically vectorise Cython code simply because loops are discouraged in normal
-Python. The point is to move expensive iteration into compiled code.
+Do not mechanically vectorise Cython code simply because loops are discouraged in
+normal Python.
+The point is to move expensive iteration into compiled code.
 
 ---
 
 ## 18. Testing and Correctness
 
-Testing is part of the implementation and enforces **Make it correct**. Tests should provide confidence in behaviour and numerical correctness without constraining the implementation.
+Testing is part of the implementation and enforces **Make it correct**.
+Tests should provide confidence in behaviour and numerical correctness without
+constraining the implementation.
 
 ### Every bug gets a regression test
 
-Every reproducible bug fix must include a test that fails before the fix and passes after it.
+Every reproducible bug fix must include a test that fails before the fix and
+passes after it.
 
 ### Prefer independent correctness tests
 
@@ -752,22 +822,39 @@ Where possible, test against:
 - manufactured solutions;
 - known limiting behaviour.
 
-Prefer tests that provide an independent correctness oracle over tests that reproduce the implementation logic inside the test.
+Prefer tests that provide an independent correctness oracle over tests that
+reproduce the implementation logic inside the test.
 
 ### Use gold regression tests
 
-Gold regression tests are strongly encouraged for end-to-end numerical workflows. A gold file should represent a known correct result that does not change merely because the API or implementation was refactored. Use a strong balance of:
+Gold regression tests are strongly encouraged for
+end-to-end numerical workflows.
+A gold file should represent a known correct result that does not change merely because
+the API or implementation was refactored.
+Use a strong balance of:
 
-- analytic or independently derived tests; and
+- analytic or independently derived tests;
+  and
 - end-to-end gold regression tests.
 
 ### Test behaviour, not implementation
 
-Tests should normally verify externally observable behaviour rather than implementation details. Internal refactoring should not break tests when the public behaviour remains correct. Avoid tests that reach unnecessarily into private functions, internal state, intermediate representations, or implementation specific call sequences. Testing internal components directly is appropriate where they implement substantial or independently meaningful behaviour.
+Tests should normally verify externally observable behaviour rather than
+implementation details.
+Internal refactoring should not break tests when
+the public behaviour remains correct.
+Avoid tests that reach unnecessarily into private functions, internal state,
+intermediate representations,
+or implementation specific call sequences.
+Testing internal components directly is appropriate where they implement substantial or
+independently meaningful behaviour.
 
 ### Avoid low-value and redundant tests
 
-Do not add tests merely to exercise code that has no meaningful behaviour to verify. For example, a trivial constructor normally does not require a dedicated test if it simply stores its arguments and cannot fail:
+Do not add tests merely to exercise code that has no meaningful behaviour to
+verify.
+For example, a trivial constructor normally does not require a dedicated test if
+it simply stores its arguments and cannot fail:
 
 ```python
 class Camera:
@@ -776,15 +863,22 @@ class Camera:
         self.height = height
 ```
 
-Test construction when it performs validation, transformation, resource allocation, or other behaviour that can meaningfully succeed or fail.
+Test construction when it performs validation, transformation,
+resource allocation,
+or other behaviour that can meaningfully succeed or fail.
 
 Avoid:
 
-- repetitive tests that exercise the same behaviour through slightly different inputs without adding useful coverage;
-- multiple tests of the same behaviour at different layers unless each provides a distinct correctness guarantee;
-- tests that merely confirm removed functionality, classes, functions, or attributes are absent;
-- tests that reproduce implementation logic rather than independently checking its result;
-- tests coupled to private implementation details that may legitimately change during refactoring;
+- repetitive tests that exercise the same behaviour through slightly different inputs without
+  adding useful coverage;
+- multiple tests of the same behaviour at different layers unless each provides a
+  distinct correctness guarantee;
+- tests that merely confirm removed functionality, classes, functions,
+  or attributes are absent;
+- tests that reproduce implementation logic rather than independently checking its
+  result;
+- tests coupled to private implementation details that
+  may legitimately change during refactoring;
 - tests whose only purpose is to increase line or branch coverage.
 
 Parameterisation should be used when several cases exercise the same behaviour:
@@ -802,11 +896,16 @@ def test_scale_value(value: float, expected: float) -> None:
     assert scale_value(value) == expected
 ```
 
-Separate tests are preferred when different cases represent meaningfully different behaviours or failure modes.
+Separate tests are preferred when different cases represent meaningfully
+different behaviours or failure modes.
 
 ### Use fixtures for setup and teardown
 
-Use `pytest.fixture` for test setup and teardown when a test creates temporary files, directories, resources, or other state that must be cleaned up. Prefer a fixture using `yield` so teardown runs even if the test raises an exception or an assertion fails:
+Use `pytest.fixture` for test setup and teardown when a test creates temporary files, directories,
+resources,
+or other state that must be cleaned up.
+Prefer a fixture using `yield` so teardown runs even if the test raises an exception or
+an assertion fails:
 
 ```python
 from collections.abc import Iterator
@@ -846,14 +945,18 @@ def test_write_output(tmp_path: Path) -> None:
     path.unlink()
 ```
 
-If the test fails before reaching the cleanup code, the teardown will not run. Prefer built-in pytest fixtures such as `tmp_path` where they already provide the required lifecycle management.
+If the test fails before reaching the cleanup code, the teardown will not run.
+Prefer built-in pytest fixtures such as `tmp_path` where
+they already provide the required lifecycle management.
 
 ### Keep tests clear and focused
 
-Use descriptive test names and keep each test focused on a clear behaviour. A test should make it obvious:
+Use descriptive test names and keep each test focused on a clear behaviour.
+A test should make it obvious:
 
 - what behaviour is being exercised;
-- what result is expected; and
+- what result is expected;
+  and
 - why failure indicates a problem.
 
 ---
@@ -862,7 +965,8 @@ Use descriptive test names and keep each test focused on a clear behaviour. A te
 
 ### Comments
 
-Use comments sparingly. Prefer code that explains itself.
+Use comments sparingly.
+Prefer code that explains itself.
 
 Comments are useful for:
 
@@ -871,7 +975,8 @@ Comments are useful for:
 - array shapes and axis meanings;
 - algorithmic subtleties;
 - references to papers or standards;
-- temporary workarounds that need explanation.
+- temporary workarounds that need explanation;
+- clearly marking sections of long or complex code with header style blocks.
 
 Do not narrate obvious code:
 
@@ -908,10 +1013,14 @@ Use autodocstring tooling where helpful.
 
 Use the following standard development tools:
 
-- **Ruff** — formatting and everyday linting;
-- **Pyright** — static type checking;
-- **Pylint** — optional deeper linting and code-quality review;
-- **pytest** — testing.
+- **Ruff** —
+  formatting and everyday linting;
+- **Pyright** —
+  static type checking;
+- **Pylint** —
+  optional deeper linting and code-quality review;
+- **pytest** —
+  testing.
 
 A useful mental model is:
 
