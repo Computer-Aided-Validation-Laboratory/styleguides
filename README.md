@@ -12,6 +12,13 @@ These principles should be considered together from the beginning of a design. P
 
 The following style guides should be followed when writing code for the Computer Aided Validation Laboratory organisation:
 
-* [Python Style Guide](guides/PYTHON_STYLE_GUIDE.md)
-* [C/C++ Style Guide](guides/CPP_STYLE_GUIDE.md)
-* [Zig Style Guide](guides/ZIG_STYLE_GUIDE.md)
+* [Python Style Guide](guides/python_style_guide.md)
+
+If you are writing performant compiled code for scientific or engineering simulation software start here:
+
+* [Performance Oriented Software Guide](guides/performance_oriented_software_guide.md)
+
+Then go to the language specific guide:
+
+* [C++ Style Guide](guides/cpp_style_guide.md)
+* [Zig Style Guide](guides/zig_style_guide.md)
