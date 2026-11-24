@@ -22,3 +22,8 @@ Then go to the language specific guide:
 
 * [C++ Style Guide](guides/cpp_style_guide.md)
 * [Zig Style Guide](guides/zig_style_guide.md)
+
+Guide for using AI coding agents:
+
+* [Agentic Coding Guide](guides/ai_guide.md)
+
